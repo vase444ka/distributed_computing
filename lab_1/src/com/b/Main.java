@@ -16,12 +16,9 @@ public class Main{
 
         JSlider slider = new JSlider(JSlider.HORIZONTAL);
         JLabel sliderLabel = new JLabel("Manipulated Slider", JLabel.CENTER);
-        JTextArea semaphoreStateMessage = new JTextArea("Semaphore is vacant");
-        semaphoreStateMessage.setEditable(false);
         JPanel mainLayout = new JPanel();
         mainLayout.add(sliderLabel);
         mainLayout.add(slider);
-        mainLayout.add(semaphoreStateMessage);
         layout.add(mainLayout);
 
         LinkedList<CustomReusableThread> threads = new LinkedList<>();
@@ -32,6 +29,9 @@ public class Main{
             threads.add(new CustomReusableThread(slider, threadLayouts.getLast(), increment, semaphore));
             layout.add(threadLayouts.getLast());
         }
+
+        threads.getLast().setCorrespondent(threads.getFirst());
+        threads.getFirst().setCorrespondent(threads.getLast());
 
         frame.add(layout);
         frame.setVisible(true);

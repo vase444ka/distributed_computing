@@ -3,6 +3,8 @@ package com.b;
 import javax.swing.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static javax.swing.JOptionPane.showMessageDialog;
+
 public class CustomReusableThread {
     private JSlider slider;
     private boolean increment = false;
@@ -11,6 +13,7 @@ public class CustomReusableThread {
     JButton on, off;
     Thread thread;
     boolean working = false;
+    CustomReusableThread correspondent;
 
     public CustomReusableThread(JSlider slider, JPanel layoutPanel, boolean increment, AtomicInteger semaphore){
         this.slider = slider;
@@ -31,9 +34,16 @@ public class CustomReusableThread {
         });
     }
 
+    public void setCorrespondent(CustomReusableThread correspondent) {
+        if (correspondent != this)
+            this.correspondent = correspondent;
+    }
+
     private boolean start(){
-        if (!semaphore.compareAndSet(0, 1))
+        if (!semaphore.compareAndSet(0, 1)){
+            showMessageDialog(null, "Semaphore is already acquired");
             return false;
+        }
         working = true;
         thread = new Thread(()->{
             while (working) {
@@ -56,6 +66,9 @@ public class CustomReusableThread {
             }
         });
         thread.setDaemon(true);
+        if (correspondent != null){
+            correspondent.off.setEnabled(false);
+        }
         thread.start();
         return true;
     }
@@ -64,6 +77,9 @@ public class CustomReusableThread {
         if (working) {
             working = false;
             thread.join();
+            if (correspondent != null){
+                correspondent.off.setEnabled(true);
+            }
             semaphore.set(0);
         }
     }
