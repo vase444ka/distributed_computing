@@ -1,14 +1,12 @@
 package com.a;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class SliderThread extends Thread{
     private JSlider slider;
     private JSlider prioritySlider;
     private JPanel layoutPanel;
-    private boolean increment = false;
+    private boolean increment;
     private int minSliderValue, maxSliderValue;
 
     public SliderThread(JSlider slider, JPanel layoutPanel, boolean increment){
@@ -37,9 +35,9 @@ public class SliderThread extends Thread{
     public void run(){
         while (true) {
             synchronized (slider) {
-                if (increment && slider.getValue() < maxSliderValue) {
+                if (increment && slider.getValue() < maxSliderValue - 10) {
                     slider.setValue(slider.getValue() + 1);
-                } else if (!increment && slider.getValue() > minSliderValue) {
+                } else if (!increment && slider.getValue() > minSliderValue + 10) {
                     slider.setValue(slider.getValue() - 1);
                 }
             }
