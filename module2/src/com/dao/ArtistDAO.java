@@ -43,16 +43,17 @@ public class ArtistDAO {
         return null;
     }
 
-    public static boolean insert(@NotNull Movie movie){
-        String sql = "INSERT INTO movie(idDirector, country, title, released) VALUES (?,?,?,?)";
+    public static boolean insert(@NotNull Artist artist){
+        String sql = "INSERT INTO artist(firstname, lastname, dateofbirth) VALUES (?,?,?)";
         try{
             Connection con = getConnection();
+
             PreparedStatement st = con.prepareStatement(sql);
-            //TODO director id
-            st.setString(2, movie.getCountry());
-            st.setString(3, movie.getTitle());
-            st.setDate(4, (Date) movie.getReleased());
+            st.setString(1, artist.getFirstName());
+            st.setString(2, artist.getLastName());
+            st.setDate(3, (Date) artist.getDateOfBirth());
             st.executeUpdate();
+
             st.close();
             con.close();
         } catch (SQLException e){
