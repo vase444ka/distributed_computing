@@ -5,8 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ServerSocketTask2 {
-    private ServerSocket server = null;
-
     public static void main(String[] args) {
         ServerSocket server = null;
 
@@ -15,8 +13,7 @@ public class ServerSocketTask2 {
             server.setReuseAddress(true);
             while (true) {
                 Socket client = server.accept();
-                Handler handler = new Handler(client);
-                new Thread(handler).start();
+                new Thread(new Handler(client)).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -33,7 +30,7 @@ public class ServerSocketTask2 {
     }
 
     private static class Handler implements Runnable {
-        Socket client = null;
+        Socket client;
         ObjectOutputStream out = null;
         ObjectInputStream in = null;
 
