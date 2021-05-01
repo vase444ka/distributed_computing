@@ -34,7 +34,7 @@ public class MovieDAO {
             ResultSet rs = st.executeQuery();
             List <Artist> actors = new LinkedList<>();
             while (rs.next()){
-                actors.add(ArtistDAO.getArtistById(rs.getLong("idartist")));
+                actors.add(ArtistDAO.getArtistById(rs.getLong("idactor")));
             }
             st.close();
             con.close();
@@ -119,9 +119,10 @@ public class MovieDAO {
             Connection con = DBC.getConnection();
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(sql);
+            List<Movie> res = parseFromRS(rs);
             st.close();
             con.close();
-            return parseFromRS(rs);
+            return res;
         } catch (SQLException e) {
             e.printStackTrace();
         }

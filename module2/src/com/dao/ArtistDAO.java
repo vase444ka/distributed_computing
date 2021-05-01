@@ -34,9 +34,10 @@ public class ArtistDAO {
             PreparedStatement st = con.prepareStatement(sql);
             st.setLong(1, id);
             ResultSet rs = st.executeQuery();
+            Artist res = parseFromRS(rs).get(0);
             st.close();
             con.close();
-            return parseFromRS(rs).get(0);
+            return res;
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -69,9 +70,10 @@ public class ArtistDAO {
             Connection con = getConnection();
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(sql);
+            List<Artist> res = parseFromRS(rs);
             st.close();
             con.close();
-            return parseFromRS(rs);
+            return res;
         } catch (SQLException e){
             e.printStackTrace();
         }
