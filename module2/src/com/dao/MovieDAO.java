@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.dao.DBC.getConnection;
+
 public class MovieDAO {
     private static List<Movie> parseFromRS(ResultSet rs) throws SQLException {
         LinkedList<Movie> movies = new LinkedList<>();
@@ -43,18 +45,67 @@ public class MovieDAO {
         return null;
     }
 
+    public static long getId(Movie movie){
+        String sql = "SELECT idmovie FROM public.movie WHERE (country = ? AND title = ? AND released = ?)";
+        try{
+            Connection con = getConnection();
+
+            PreparedStatement st = con.prepareStatement(sql);
+            st.setString(1, movie.getCountry());
+            st.setString(2, movie.getTitle());
+            st.setDate(3, (Date) movie.getReleased());
+            ResultSet rs = st.executeQuery();
+
+            long idmovie = -1;
+            if (rs.next()){
+                idmovie = rs.getLong("idmovie");
+            }
+            st.close();
+            con.close();
+            return idmovie;
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private static void insertActors(Movie movie){
+        long idmovie = getId(movie);
+        try{
+            for (Artist artist: movie.getActors()){
+                String sql = "INSERT INTO movietoactor (idmovie, idactor) VALUES (?, ?)";
+                Connection con = DBC.getConnection();
+                PreparedStatement pst = con.prepareStatement(sql);
+                pst.setLong(1, idmovie);
+                pst.setLong(2, ArtistDAO.getId(artist));
+                pst.executeUpdate();
+                pst.close();
+                con.close();
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
     public static boolean insert(@NotNull Movie movie) {
         String sql = "INSERT INTO movie(idDirector, country, title, released) VALUES (?,?,?,?)";
         try {
             Connection con = DBC.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
-            st.setLong(1, ArtistDAO.getId(movie.getDirector()));
+
+            long idDirector = ArtistDAO.getId(movie.getDirector());
+            if (idDirector == -1){
+                ArtistDAO.insert(movie.getDirector());
+                idDirector =  ArtistDAO.getId(movie.getDirector());
+            }
+            st.setLong(1, idDirector);
             st.setString(2, movie.getCountry());
             st.setString(3, movie.getTitle());
             st.setDate(4, (Date) movie.getReleased());
             st.executeUpdate();
             st.close();
             con.close();
+            insertActors(movie);
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -78,7 +129,7 @@ public class MovieDAO {
     }
 
     public static List<Movie> getNewMovies() {
-        String sql = "SELECT * FROM movie WHERE (? - EXTRACT(YEAR FROM released) <= 1)";
+        String sql = "SELECT * FROM public.movie WHERE (? - EXTRACT(YEAR FROM released) <= 1)";
         try {
             Connection con = DBC.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
@@ -95,7 +146,7 @@ public class MovieDAO {
     }
 
     public static boolean update(@NotNull Movie old, @NotNull Movie updated) {
-        String sql = "UPDATE movie SET country = ?, title = ?, released = ?" +
+        String sql = "UPDATE public.movie SET country = ?, title = ?, released = ?" +
                 "WHERE (country = ? AND title = ? AND released = ?)";
         try {
             Connection con = DBC.getConnection();
@@ -119,7 +170,7 @@ public class MovieDAO {
     }
 
     public static boolean delete(@NotNull Movie movie) {
-        String sql = "DELETE FROM movie WHERE (country = ? AND title = ? AND released = ?)";
+        String sql = "DELETE FROM public.movie WHERE (country = ? AND title = ? AND released = ?)";
         try {
             Connection con = DBC.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
@@ -137,7 +188,7 @@ public class MovieDAO {
     }
 
     public static boolean deleteOldMovies(int yearsAgo) {
-        String sql = "DELETE FROM movie WHERE (? - EXTRACT(YEAR FROM released) > ?)";
+        String sql = "DELETE FROM public.movie WHERE (? - EXTRACT(YEAR FROM released) > ?)";
         try {
             Connection con = DBC.getConnection();
             PreparedStatement st = con.prepareStatement(sql);

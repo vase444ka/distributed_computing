@@ -28,7 +28,7 @@ public class ArtistDAO {
     }
 
     public static Artist getArtistById(long id){
-        String sql = "SELECT * FROM artist WHERE idartist = ?";
+        String sql = "SELECT * FROM public.artist WHERE idartist = ?";
         try{
             Connection con = getConnection();
             PreparedStatement st = con.prepareStatement(sql);
@@ -44,7 +44,7 @@ public class ArtistDAO {
     }
 
     public static boolean insert(@NotNull Artist artist){
-        String sql = "INSERT INTO artist(firstname, lastname, dateofbirth) VALUES (?,?,?)";
+        String sql = "INSERT INTO public.artist(firstname, lastname, dateofbirth) VALUES (?,?,?)";
         try{
             Connection con = getConnection();
 
@@ -64,7 +64,7 @@ public class ArtistDAO {
     }
 
     public static List<Artist> getAll(){
-        String sql = "SELECT * FROM artist";
+        String sql = "SELECT * FROM public.artist";
         try{
             Connection con = getConnection();
             Statement st = con.createStatement();
@@ -79,7 +79,7 @@ public class ArtistDAO {
     }
 
     public static long getId(Artist artist){
-        String sql = "SELECT idartist FROM artist WHERE (firstname = ? AND lastname = ? AND dateofbirth = ?)";
+        String sql = "SELECT idartist FROM public.artist WHERE (firstname = ? AND lastname = ? AND dateofbirth = ?)";
         try{
             Connection con = getConnection();
 
@@ -89,9 +89,19 @@ public class ArtistDAO {
             st.setDate(3, (Date) artist.getDateOfBirth());
             ResultSet rs = st.executeQuery();
 
-            st.close();
-            con.close();
-            return rs.getLong("idartist");
+            long idartist = -1;
+            if (rs.next()){
+                idartist = rs.getLong("idartist");
+                st.close();
+                con.close();
+                return idartist;
+            }
+            else{
+                st.close();
+                con.close();
+                insert(artist);
+                return getId(artist);
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -99,7 +109,7 @@ public class ArtistDAO {
     }
 
     public static boolean update(Artist old, Artist updated){
-        String sql = "UPDATE artist SET firstname = ?, lastname = ?, dateofbirth = ?" +
+        String sql = "UPDATE public.artist SET firstname = ?, lastname = ?, dateofbirth = ?" +
                 "WHERE (firstname = ? AND lastname = ? AND dateofbirth = ?)";
         try{
             Connection con = getConnection();
@@ -123,7 +133,7 @@ public class ArtistDAO {
     }
 
     public static boolean delete(Artist artist){
-        String sql = "DELETE FROM artist WHERE (firstname = ? AND lastname = ? AND dateofbirth = ?)";
+        String sql = "DELETE FROM public.artist WHERE (firstname = ? AND lastname = ? AND dateofbirth = ?)";
         try{
             Connection con = getConnection();
 

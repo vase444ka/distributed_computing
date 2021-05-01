@@ -1,6 +1,7 @@
 package com.entities;
 
-import java.util.Date;
+
+import java.sql.Date;
 
 public class Artist {
     private String firstName;
