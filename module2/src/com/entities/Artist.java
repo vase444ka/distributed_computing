@@ -1,9 +1,10 @@
 package com.entities;
 
 
+import java.io.Serializable;
 import java.sql.Date;
 
-public class Artist {
+public class Artist implements Serializable {
     private String firstName;
     private String lastName;
     private Date dateOfBirth;
@@ -28,6 +29,6 @@ public class Artist {
     @Override
     public String toString() {
         return firstName + ' ' + lastName +
-                ", born" + dateOfBirth;
+                ", born " + dateOfBirth;
     }
 }

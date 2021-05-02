@@ -1,9 +1,10 @@
 package com.entities;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.List;
 
-public class Movie {
+public class Movie implements Serializable {
     private Artist director;
     private List<Artist> actors;
     private String title;

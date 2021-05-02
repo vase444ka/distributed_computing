@@ -137,9 +137,10 @@ public class MovieDAO {
             st.setInt(1,
                     LocalDateTime.now().getYear());
             ResultSet rs = st.executeQuery();
+            var res = parseFromRS(rs);
             st.close();
             con.close();
-            return parseFromRS(rs);
+            return res;
         } catch (SQLException e) {
             e.printStackTrace();
         }

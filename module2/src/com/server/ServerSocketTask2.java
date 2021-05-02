@@ -1,5 +1,10 @@
 package com.server;
 
+import com.dao.ArtistDAO;
+import com.dao.MovieDAO;
+import com.entities.Artist;
+import com.entities.Movie;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -31,36 +36,73 @@ public class ServerSocketTask2 {
 
     private static class Handler implements Runnable {
         Socket client;
-        ObjectOutputStream out = null;
-        ObjectInputStream in = null;
+        ObjectOutputStream in = null;
+        ObjectInputStream out = null;
 
         public Handler(Socket client) {
             this.client = client;
             try {
-                in = new ObjectInputStream(client.getInputStream());
-                out = new ObjectOutputStream(client.getOutputStream());
+                out = new ObjectInputStream(client.getInputStream());
+                in = new ObjectOutputStream(client.getOutputStream());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        public void processQuery() throws Exception {
+        public boolean processQuery() throws Exception {
             String response;
-            String query = (String) in.readObject();
+            String query = (String) out.readObject();
 
             switch (query) {
-                case "ActorInsert":
-                    //DAO query
-                    out.write(1);
+                case "end":
+                    return false;
+                case "ArtistInsert":
+                    Artist artist = (Artist) out.readObject();
+                    ArtistDAO.insert(artist);
+                    break;
+                case "ArtistGetAll":
+                    in.writeObject(ArtistDAO.getAll());
+                    break;
+                case "ArtistUpdate":
+                    Artist old = (Artist) out.readObject();;
+                    Artist updated = (Artist) out.readObject();;
+                    ArtistDAO.update(old, updated);
+                    break;
+                case "ArtistDelete":
+                    Artist deletedArtist = (Artist) out.readObject();;
+                    ArtistDAO.delete(deletedArtist);
+                    break;
+                case "MovieInsert":
+                    Movie movie = (Movie) out.readObject();
+                    MovieDAO.insert(movie);
+                    break;
+                case "MovieGetAll":
+                    in.writeObject(MovieDAO.getAll());
+                    break;
+                case "MovieGetNew":
+                    in.writeObject(MovieDAO.getNewMovies());
+                    break;
+                case "MovieUpdate":
+                    Movie oldMovie = (Movie) out.readObject();;
+                    Movie updatedMovie = (Movie) out.readObject();;
+                    MovieDAO.update(oldMovie, updatedMovie);
+                    break;
+                case "MovieDelete":
+                    Movie deletedMovie = (Movie) out.readObject();;
+                    MovieDAO.delete(deletedMovie);
+                    break;
+                case "MovieDeleteOld":
+                    int N =  out.readInt();
+                    MovieDAO.deleteOldMovies(N);
                     break;
             }
-
+            return true;
         }
 
 
         public void run() {
             try {
-                processQuery();
+                while(processQuery()){}
                 in.close();
                 out.close();
                 client.close();

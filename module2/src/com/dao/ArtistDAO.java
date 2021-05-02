@@ -153,4 +153,6 @@ public class ArtistDAO {
         }
         return false;
     }
+
+    //TODO queries
 }
