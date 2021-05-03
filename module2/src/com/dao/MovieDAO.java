@@ -2,7 +2,6 @@ package com.dao;
 
 import com.entities.Artist;
 import com.entities.Movie;
-import org.jetbrains.annotations.NotNull;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -87,7 +86,7 @@ public class MovieDAO {
         }
     }
 
-    public static boolean insert(@NotNull Movie movie) {
+    public static boolean insert(Movie movie) {
         String sql = "INSERT INTO movie(idDirector, country, title, released) VALUES (?,?,?,?)";
         try {
             Connection con = DBC.getConnection();
@@ -147,7 +146,7 @@ public class MovieDAO {
         return null;
     }
 
-    public static boolean update(@NotNull Movie old, @NotNull Movie updated) {
+    public static boolean update(Movie old, Movie updated) {
         String sql = "UPDATE public.movie SET country = ?, title = ?, released = ?" +
                 "WHERE (country = ? AND title = ? AND released = ?)";
         try {
@@ -171,7 +170,7 @@ public class MovieDAO {
         return true;
     }
 
-    public static boolean delete(@NotNull Movie movie) {
+    public static boolean delete(Movie movie) {
         String sql = "DELETE FROM public.movie WHERE (country = ? AND title = ? AND released = ?)";
         try {
             Connection con = DBC.getConnection();

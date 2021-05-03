@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -29,8 +28,14 @@ public class ClientSocketTask2 {
             out.writeObject(query);
             switch (query){
                 case "ArtistInsert":
-                    //TODO reading
-                    out.writeObject(new Artist("Jason", "Stetham", Date.valueOf("1970-1-7")));
+                case "ArtistDelete":
+                    out.writeObject(Artist.read());
+                    break;
+                case "ArtistUpdate":
+                    System.out.println("Old artist's info");
+                    out.writeObject(Artist.read());
+                    System.out.println("New artist's info");
+                    out.writeObject(Artist.read());
                     break;
                 case "ArtistGetAll":
                     try {
@@ -42,14 +47,10 @@ public class ClientSocketTask2 {
                         e.printStackTrace();
                     }
                     break;
-                case "ArtistUpdate":
-                    //TODO reading artist
-                    break;
-                case "ArtistDelete":
-                    //TODO reading
-                    break;
                 case "MovieInsert":
-
+                case "MovieUpdate":
+                case "MovieDelete":
+                    out.writeObject(Movie.read());
                     break;
                 case "MovieGetNew":
                 case "MovieGetAll":
@@ -62,13 +63,8 @@ public class ClientSocketTask2 {
                         e.printStackTrace();
                     }
                     break;
-                case "MovieUpdate":
-                    //TODO reading
-                    break;
-                case "MovieDelete":
-                    //TODO reading
-                    break;
                 case "MovieDeleteOld":
+                    out.writeInt(new Scanner(System.in).nextInt());
                     break;
                 case "end":
                     return false;
