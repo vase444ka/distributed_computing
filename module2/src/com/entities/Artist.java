@@ -3,6 +3,7 @@ package com.entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Scanner;
 
 public class Artist implements Serializable {
     private String firstName;
@@ -12,6 +13,20 @@ public class Artist implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public static Artist read(){
+        Scanner scanner = new Scanner(System.in);
+        String fname, lname;
+        Date dateofBirth;
+        System.out.println("Enter new artist's data:");
+        System.out.println("First name: ");
+        fname = scanner.nextLine();
+        System.out.println("Last name: ");
+        lname = scanner.nextLine();
+        System.out.println("Date of birth in YYYY-MM-DD format: ");
+        dateofBirth = Date.valueOf(scanner.nextLine());
+        return new Artist(fname, lname, dateofBirth);
     }
 
     public String getFirstName() {

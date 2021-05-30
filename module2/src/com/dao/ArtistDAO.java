@@ -2,7 +2,7 @@ package com.dao;
 
 import com.entities.Artist;
 import com.entities.Movie;
-import org.jetbrains.annotations.NotNull;
+
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class ArtistDAO {
         return null;
     }
 
-    public static boolean insert(@NotNull Artist artist){
+    public static boolean insert(Artist artist){
         String sql = "INSERT INTO public.artist(firstname, lastname, dateofbirth) VALUES (?,?,?)";
         try{
             Connection con = getConnection();
