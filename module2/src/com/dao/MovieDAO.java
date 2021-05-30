@@ -160,7 +160,6 @@ public class MovieDAO {
             st.setString(4, old.getCountry());
             st.setString(5, old.getTitle());
             st.setDate(6, (Date) old.getReleased());
-            //TODO directorId update
             st.executeUpdate();
             st.close();
             con.close();
