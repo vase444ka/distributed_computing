@@ -5,6 +5,12 @@ import java.util.List;
 
 public class Country {
     private long id;
+
+    public Country(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     private String name;
     private List<City> cities = new ArrayList<>();
 
